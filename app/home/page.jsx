@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import Layouts from "../components/layouts";
 import { getAllOrders, getAllStocks } from "../api";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 const Page = () => {
+  const router = useRouter();
+
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
 
@@ -29,6 +32,13 @@ const Page = () => {
   useEffect(() => {
     getStocks();
   }, []);
+
+  const toEditPage = () => {
+    router.push(`/items/stock`);
+  };
+  const toEditPage2 = () => {
+    router.push(`/items/orders`);
+  };
   return (
     <Layouts>
       <div className="container">
@@ -45,6 +55,48 @@ const Page = () => {
         </div>
 
         <div className="mt-5">
+          {localStorage.getItem("role") == "admin" ? (
+            <>
+              <h1 style={{ marginTop: "70px" }}>Out Of Items</h1>
+
+              <div
+                className="card"
+                style={{ marginTop: "10px", marginBottom: "70px" }}
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name Of The Product</th>
+                      <th>Category</th>
+                      <th>Location</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data2.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.name}</td>
+                        <td>{item.category}</td>
+                        <td>{item.location}</td>
+                        <td>
+                          <span
+                            className="badge badge-primary"
+                            style={{ color: "white", cursor: "pointer" }}
+                            onClick={toEditPage}
+                          >
+                            Edit Stock
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
           <h1>My Order Items</h1>
 
           <div className="card">
@@ -55,7 +107,11 @@ const Page = () => {
                   <th>Requested Date</th>
                   <th>Location</th>
                   <th>Confirmed Date</th>
-                  <th>Status</th>
+                  {localStorage.getItem("role") == "admin" ? (
+                    <></>
+                  ) : (
+                    <th>Status</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -65,17 +121,29 @@ const Page = () => {
                     <td>{moment(item.requestDate).format("MMMM Do YYYY")}</td>
                     <td>{item.location}</td>
                     <td>{item.status == "pending" ? "-" : item.updatedAT}</td>
-
+                    {localStorage.getItem("role") == "admin" ? (
+                      <></>
+                    ) : (
+                      <td>
+                        {" "}
+                        <span
+                          className={`${
+                            item.status == "pending"
+                              ? "badge badge-error"
+                              : "badge badge-success"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                    )}
                     <td>
-                      {" "}
                       <span
-                        className={`${
-                          item.status == "pending"
-                            ? "badge badge-error"
-                            : "badge badge-success"
-                        }`}
+                        className="badge badge-primary"
+                        style={{ color: "white", cursor: "pointer" }}
+                        onClick={toEditPage2}
                       >
-                        {item.status}
+                        More info
                       </span>
                     </td>
                   </tr>
@@ -97,7 +165,11 @@ const Page = () => {
                   <th>Quantity</th>
                   <th>UOM</th>
                   <th>Request Date</th>
-                  <th>Status</th>
+                  {localStorage.getItem("role") == "admin" ? (
+                    <></>
+                  ) : (
+                    <th>Status</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -109,17 +181,22 @@ const Page = () => {
                     <td>{item.uom}</td>
 
                     <td>{moment(item.createdAt).format("MMMM Do YYYY")}</td>
-                    <td>
-                      <span
-                        className={`${
-                          item.status == "out_stock"
-                            ? "badge badge-error"
-                            : "badge badge-success"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
+                    {localStorage.getItem("role") == "admin" ? (
+                      <></>
+                    ) : (
+                      <td>
+                        {" "}
+                        <span
+                          className={`${
+                            item.status == "out_stock"
+                              ? "badge badge-error"
+                              : "badge badge-success"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

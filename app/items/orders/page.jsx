@@ -1,17 +1,18 @@
 "use client";
-
-import { useRouter } from "next/navigation";
 import Layouts from "../../components/layouts";
-import Link from "next/link";
+import { getAllOrders, getAllStocks } from "../../api";
 import { useEffect, useState } from "react";
-import { getAllStocks } from "@/app/api";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { addToOrder } from "@/app/stores/action/addOrder";
 
-const Orders = () => {
+const Page = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [data, setData] = useState([]);
 
-  function getStocksOrder() {
-    getAllStocks().then((res) => {
+  function getStocks() {
+    getAllOrders().then((res) => {
       var tempList = [];
       tempList = res.data.data;
       console.log("List Data => ", tempList);
@@ -19,16 +20,22 @@ const Orders = () => {
     });
   }
   useEffect(() => {
-    getStocksOrder();
+    getStocks();
   }, []);
+  const distpatchCart = (id) => {
+    router.push(`/items/orders/${id}`);
+  };
+  const toEditPage = (id) => {
+    router.push(`/items/orders/confirm-admin`);
+  };
   return (
     <Layouts>
       <div className="container">
         <div>
-          <h1>Oredered Items</h1>
+          <h1>Ordered Items</h1>
 
           <div className="card">
-            <h5>List of Ordered Items</h5>
+            <h5>List of items</h5>
 
             <div className="filter-table">
               <span>
@@ -53,28 +60,53 @@ const Orders = () => {
               <thead>
                 <tr>
                   <th>Employee</th>
-                  <th>Requested Dates</th>
+                  <th>Requested Date</th>
                   <th>Location</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Willyam Dyanata</td>
-                  <td>2023-09-10</td>
-                  <td>Vacum Central</td>
-                  <td>
-                    <Link href="/items/orders/item">More Info</Link>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Steven Setiadi</td>
-                  <td>2023-09-10</td>
-                  <td>Vacum Central</td>
-                  <td>
-                    <Link href="/items/orders/item">More Info</Link>
-                  </td>
-                </tr>
+                {data.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.employee}</td>
+                    <td>{item.requestDate}</td>
+                    <td>{item.location}</td>
+
+                    {localStorage.getItem("role") == "admin" ? (
+                      <td onClick={() => toEditPage(item.id)}>
+                        <span
+                          className="badge badge-primary"
+                          style={{ color: "white", cursor: "pointer" }}
+                        >
+                          More Info
+                        </span>
+                      </td>
+                    ) : (
+                      <td
+                        onClick={() => {
+                          distpatchCart(item.id),
+                            dispatch(
+                              addToOrder({
+                                employee: item.employee,
+                                activity: item.activity,
+                                division: item.division,
+                                machine: item.machine,
+                                requestDate: item.requestDate,
+                                // location: item.location,
+                              })
+                            );
+                        }}
+                      >
+                        <span
+                          className="badge badge-primary"
+                          style={{ color: "white", cursor: "pointer" }}
+                        >
+                          Order Item
+                        </span>
+                      </td>
+                    )}
+                  </tr>
+                ))}
               </tbody>
             </table>
 
@@ -92,4 +124,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Page;

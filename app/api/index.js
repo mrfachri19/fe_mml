@@ -75,7 +75,9 @@ export const getEmployee = get("user");
 
 // ============== items ==========
 export const getAllStocks = get("stock");
+export const updateOrder = patch("orders/update");
 export const getAllOrders = get("orders");
+
 export const postStoks = post("stock");
 
 export const updateStock = patch("stock");
@@ -90,7 +92,8 @@ const API = {
   getEmployee,
   postOrder,
   getAllOrders,
-  postStoks
+  postStoks,
+  updateOrder,
 };
 
 export default API;
