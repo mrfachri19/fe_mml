@@ -6,7 +6,7 @@ import moment from "moment";
 import { useRouter } from "next/navigation";
 
 const Requestsnpm = () => {
-    const router = useRouter();
+  const router = useRouter();
 
   const [data2, setData2] = useState([]);
 
@@ -24,13 +24,17 @@ const Requestsnpm = () => {
   const postRequest = async () => {
     router.push("/items/requests/addrequest");
   };
+  const toEditPage = (id) => {
+    router.push(`/items/requests/${id}`);
+  };
   return (
     <Layouts>
       <div className="container">
         <div>
           <h1>Requested Items</h1>
-
-          <div className="card">
+          {localStorage.getItem("role") == "admin" ? (
+            <></>
+          ) : (
             <div style={{ width: "500px" }}>
               <button
                 type="button"
@@ -40,6 +44,8 @@ const Requestsnpm = () => {
                 Add Request
               </button>
             </div>
+          )}
+          <div className="card">
             <h5>List of Requested Items</h5>
 
             <div className="filter-table">
@@ -69,7 +75,11 @@ const Requestsnpm = () => {
                   <th>Quantity</th>
                   <th>UOM</th>
                   <th>Request Date</th>
-                  <th>Status</th>
+                  {localStorage.getItem("role") == "admin" ? (
+                    <></>
+                  ) : (
+                    <th>Status</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -81,17 +91,34 @@ const Requestsnpm = () => {
                     <td>{item.uom}</td>
 
                     <td>{moment(item.createdAt).format("MMMM Do YYYY")}</td>
-                    <td>
-                      <span
-                        className={`${
-                          item.status == "out_stock"
-                            ? "badge badge-error"
-                            : "badge badge-success"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
+                    {localStorage.getItem("role") == "admin" ? (
+                      <></>
+                    ) : (
+                      <td>
+                        <span
+                          className={`${
+                            item.status == "out_stock"
+                              ? "badge badge-error"
+                              : "badge badge-success"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                    )}
+
+                    {localStorage.getItem("role") == "admin" ? (
+                      <td onClick={() => toEditPage(item.id)}>
+                        <span
+                          className="badge badge-primary"
+                          style={{ color: "white", cursor: "pointer" }}
+                        >
+                          Add Stock
+                        </span>
+                      </td>
+                    ) : (
+                      <></>
+                    )}
                   </tr>
                 ))}
               </tbody>

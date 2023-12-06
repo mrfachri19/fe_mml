@@ -1,18 +1,19 @@
 "use client";
 import Layouts from "../../components/layouts";
-import { getAllOrders, getAllStocks } from "../../api";
+import { getAllOrders } from "../../api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addToOrder } from "@/app/stores/action/addOrder";
-
+import moment from "moment";
 const Page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
 
   function getStocks() {
-    getAllOrders().then((res) => {
+    getAllOrders(`?search=${search}`).then((res) => {
       var tempList = [];
       tempList = res.data.data;
       console.log("List Data => ", tempList);
@@ -27,6 +28,12 @@ const Page = () => {
   };
   const toEditPage = (id) => {
     router.push(`/items/orders/confirm-admin`);
+  };
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Call the function to perform the search here
+      getStocks();
+    }
   };
   return (
     <Layouts>
@@ -52,7 +59,12 @@ const Page = () => {
                 <label htmlFor="" className="mr-3">
                   Search
                 </label>
-                <input type="text" className="search" />
+                <input
+                  type="text"
+                  className="search"
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />{" "}
               </span>
             </div>
 
@@ -69,7 +81,7 @@ const Page = () => {
                 {data.map((item, index) => (
                   <tr key={index}>
                     <td>{item.employee}</td>
-                    <td>{item.requestDate}</td>
+                    <td>{moment(item.requestDate).format("MMM Do YYYY")}</td>
                     <td>{item.location}</td>
 
                     {localStorage.getItem("role") == "admin" ? (

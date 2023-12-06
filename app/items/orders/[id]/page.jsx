@@ -33,7 +33,7 @@ const Page = () => {
         location: selectedOption,
       })
     );
-    router.push("/items/orders/cart");
+    router.push("/items/orders/confirm-order");
   };
   return (
     <Layouts>

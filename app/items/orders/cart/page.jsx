@@ -8,7 +8,7 @@ const Page = () => {
   const cartRedux = useSelector((state) => state.addCart.cart);
   console.log(cartRedux, "test");
   const updateStockItems = async () => {
-    router.push("/items/orders/confirm-order");
+    router.push("/home");
   };
   return (
     <Layouts>

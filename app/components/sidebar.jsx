@@ -68,13 +68,30 @@ const Sidebar = () => {
       ],
     },
   ];
+  const menuData2 = [
+    {
+      label: "Home",
+      path: "/home",
+      icon: "home",
+    },
+    {
+      label: "Items",
+      icon: "archive",
+      children: [
+        { label: "Stock", path: "/items/stock" },
+        { label: "Requests Items", path: "/items/requests" },
+        { label: "Orders Items Status", path: "/items/orders" },
+        { label: "Request Items Status", path: "/items/requeststatus" },
+      ],
+    },
+  ];
   console.log(menuData);
 
   return (
     <>
       <h3>PT Multi Makmur Lemindo Tbk</h3>
 
-      <ul>
+      {/* <ul>
         {menuData.map((item, index) =>
           localStorage.getItem("role") == "employee" ? (
             index !== menuData.length - 1 && (
@@ -84,6 +101,11 @@ const Sidebar = () => {
             <MenuItem key={index} item={item} />
           )
         )}
+      </ul> */}
+      <ul>
+        {localStorage.getItem("role") == "employee"
+          ? menuData2.map((item, index) => <MenuItem key={index} item={item} />)
+          : menuData.map((item, index) => <MenuItem key={index} item={item} />)}
       </ul>
     </>
   );

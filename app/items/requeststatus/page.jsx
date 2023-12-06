@@ -1,33 +1,24 @@
 "use client";
+import { getAllStocks } from "@/app/api";
 import Layouts from "../../components/layouts";
-import { getAllStocks } from "../../api";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/app/stores/action/addCart";
+import moment from "moment";
 
-const Page = () => {
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const [data, setData] = useState([]);
+const Requestsnpm = () => {
+  const [data2, setData2] = useState([]);
   const [search, setSearch] = useState("");
+
   function getStocks() {
     getAllStocks(`?search=${search}`).then((res) => {
       var tempList = [];
       tempList = res.data.data;
       console.log("List Data => ", tempList);
-      setData(tempList);
+      setData2(tempList);
     });
   }
   useEffect(() => {
     getStocks();
   }, []);
-  const distpatchCart = (id) => {
-    router.push(`/items/orders/${id}`);
-  };
-  const toEditPage = (id) => {
-    router.push(`/items/stock/${id}`);
-  };
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       // Call the function to perform the search here
@@ -38,10 +29,9 @@ const Page = () => {
     <Layouts>
       <div className="container">
         <div>
-          <h1>Stock</h1>
-
+          <h1>Requested Items Status</h1>
           <div className="card">
-            <h5>List of items</h5>
+            <h5>List of Requested Items</h5>
 
             <div className="filter-table">
               <span>
@@ -67,63 +57,42 @@ const Page = () => {
               </span>
             </div>
 
-            <table className="mt-4">
+            <table>
               <thead>
                 <tr>
-                  <th>Name of Product</th>
+                  <th>Name Of The Product</th>
                   <th>Category</th>
-                  <th>QTY</th>
+                  <th>Quantity</th>
                   <th>UOM</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>Request Date</th>
+                  {localStorage.getItem("role") == "admin" ? (
+                    <></>
+                  ) : (
+                    <th>Status</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {data.map((item, index) => (
+                {data2.map((item, index) => (
                   <tr key={index}>
                     <td>{item.name}</td>
                     <td>{item.category}</td>
                     <td>{item.qty}</td>
                     <td>{item.uom}</td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          item.qty > 0 ? "badge-success" : "badge-error"
-                        }`}
-                      >
-                        {item.qty > 0 ? "available" : "out of stock"}
-                      </span>
-                    </td>
+
+                    <td>{moment(item.createdAt).format("MMMM Do YYYY")}</td>
                     {localStorage.getItem("role") == "admin" ? (
-                      <td onClick={() => toEditPage(item.id)}>
-                        <span
-                          className="badge badge-primary"
-                          style={{ color: "white", cursor: "pointer" }}
-                        >
-                          Edit Stock
-                        </span>
-                      </td>
+                      <></>
                     ) : (
-                      <td
-                        onClick={() => {
-                          distpatchCart(item.id),
-                            dispatch(
-                              addToCart({
-                                name: item.name,
-                                category: item.category,
-                                qty: item.qty,
-                                uom: item.uom,
-                                status: item.status,
-                                location: item.location,
-                              })
-                            );
-                        }}
-                      >
+                      <td>
                         <span
-                          className="badge badge-primary"
-                          style={{ color: "white", cursor: "pointer" }}
+                          className={`${
+                            item.status == "out_stock"
+                              ? "badge badge-error"
+                              : "badge badge-success"
+                          }`}
                         >
-                          Order Item
+                          {item.status}
                         </span>
                       </td>
                     )}
@@ -146,4 +115,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Requestsnpm;

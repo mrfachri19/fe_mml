@@ -198,6 +198,8 @@ html {
 .filter-table .search {
   background: none;
   border: 1px solid #0490be;
+  color: white;
+  font-size: 16px;
 }
 
 .text-center {
@@ -272,11 +274,11 @@ table .badge {
 }
 
 table .badge-success {
-  background-color: green;
+  background-color: #68FF6E;
 }
 
 table .badge-error {
-  background-color: red;
+  background-color: #ED222B;
 }
 
 table .badge-primary {

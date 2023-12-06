@@ -12,6 +12,7 @@ const Orders = () => {
   const [machine, setMachine] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
+  const [name, setName] = useState("");
 
   const handleOptionChange = (value) => {
     setSelectedOption(value);
@@ -25,7 +26,7 @@ const Orders = () => {
       e.preventDefault();
       const response = await postOrder({
         employeeId: localStorage.getItem("iduser"),
-        name: cartRedux.name,
+        name: name,
         category: cartRedux.category,
         qty: cartRedux.qty,
         uom: cartRedux.uom,
@@ -37,9 +38,9 @@ const Orders = () => {
         status: "pending",
       });
       Messaege("Succes", "Success Order", "success");
-        setTimeout(() => {
-          router.push("/home");
-        }, 2000);
+      setTimeout(() => {
+        router.push("/items/orders/cart");
+      }, 2000);
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -60,7 +61,7 @@ const Orders = () => {
                   {" "}
                   <input
                     type="text"
-                    value={localStorage.getItem("nama")}
+                    onChange={(e) => setName(e.target.value)}
                     className="input-order"
                   />
                 </td>
